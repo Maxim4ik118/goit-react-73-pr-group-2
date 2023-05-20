@@ -1,77 +1,70 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { nanoid } from 'nanoid';
 
 import BookForm from './BookForm/BookForm';
 
 import booksJSON from '../books.json';
-import { ReactComponent as IconHeart } from './heart.svg';
 
 import 'react-toastify/dist/ReactToastify.css';
+import BookList from './BookList/BookList';
+import { getAllBooks } from 'services/api';
 
 const booksArray = booksJSON.books;
 
-export class App extends Component {
-  state = {
-    books: booksArray, // [{1},{2},{3},{4}]
-  };
+const toastConfig = {
+  position: 'top-center',
+  autoClose: 5000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+  theme: 'colored',
+};
 
-  onAddBook = book => {
+export function App() {
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await getAllBooks();
+        setBooks(response);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBooks();
+  }, []);
+
+  const onAddBook = book => {
     const finalBookData = {
       id: nanoid(),
-      ...book
-    }
+      ...book,
+    };
 
-    this.setState(prevState => {
-      return { books: [...prevState.books, finalBookData] };
-    }); // складніший, але універсальний
-    // this.setState({ books: [...this.state.books, book] });  простіший, але не універсальний
+    setBooks([...books, finalBookData]);
 
-    toast.success(`Book with title ${book.title} successfully added!`, {
-      position: 'top-center',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'colored',
-    });
+    toast.success(
+      `Book with title ${book.title} successfully added!`,
+      toastConfig
+    );
   };
 
-  render() {
-    console.log(this.state.books);
-    return (
-      <div>
-        <BookForm title="BookForm" onAddBook={this.onAddBook} />
-        <div>
-          {Array.isArray(this.state.books) &&
-            this.state.books.length > 0 &&
-            this.state.books.map(book => {
-              return (
-                <div key={book.id}>
-                  <h3>{book.title}</h3>
-                  <p>
-                    <b>Author: </b>
-                    {book.author}
-                  </p>
-                  <p>
-                    <b>Year: </b>
-                    {book.year}
-                  </p>
-                  <p>
-                    <b>Genre: </b>
-                    {book.genre}
-                  </p>
-                  <IconHeart
-                    className={`book-icon ${book.favourite ? 'favourite' : ''}`}
-                  />
-                </div>
-              );
-            })}
-        </div>
-        <ToastContainer />
-      </div>
-    );
-  }
+  console.log(books);
+  return (
+    <div>
+      <BookForm title="BookForm" onAddBook={onAddBook} />
+      <BookList books={books} />
+      <ToastContainer />
+    </div>
+  );
 }

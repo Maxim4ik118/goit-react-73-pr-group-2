@@ -14,6 +14,6 @@ code {
     monospace;
 }
 
-.book-icon.favourite {
-  fill: red;
+*, *::before, *::after {
+  box-sizing: border-box;
 }
