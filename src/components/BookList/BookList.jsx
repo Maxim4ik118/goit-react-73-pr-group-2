@@ -2,7 +2,7 @@ import React from 'react';
 import { ReactComponent as IconHeart } from '../heart.svg';
 import { StyledBookCard, StyledList } from './styled';
 
-function BookList({ books }) {
+function BookList({ books, onDeleteBook, onFavouriteBook }) {
   return (
     <StyledList>
       {Array.isArray(books) &&
@@ -26,10 +26,12 @@ function BookList({ books }) {
                 <b>Genre: </b>
                 {book.genre}
               </p>
-              <IconHeart
-                className={`book-icon ${book.favourite ? 'favourite' : ''}`}
-              />
-              <button type="button" className="removeBtn">
+              <button className='favoriteButton' type='button' onClick={() => onFavouriteBook(book._id)}>
+                <IconHeart
+                  className={`book-icon ${book.favourite ? 'favourite' : ''}`}
+                />
+              </button>
+              <button type='button' className='removeBtn' onClick={() => onDeleteBook(book._id)}>
                 &times;
               </button>
             </StyledBookCard>

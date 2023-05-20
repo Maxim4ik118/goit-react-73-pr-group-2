@@ -13,9 +13,13 @@ export const StyledBookCard = styled.div`
   border-radius: 10px;
   width: calc((100% - 90px) / 4);
 
-  .removeBtn {
+  .removeBtn,
+  .favoriteButton{
+    cursor: pointer;
     position: absolute;
     top: 10px;
+  }
+  .removeBtn {
     right: 10px;
   }
 
@@ -23,9 +27,10 @@ export const StyledBookCard = styled.div`
     fill: red;
   }
 
-  .book-icon {
-    position: absolute;
-    top: 10px;
+  .favoriteButton {
     left: 10px;
+    background-color: transparent;
+    border: none;
+    padding: 0;
   }
 `;
