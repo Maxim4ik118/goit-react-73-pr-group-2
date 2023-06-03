@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { getPostDetails } from "services/api";
 
-export const SearchPosts = () => {
+
+export default function SearchPosts() {
   const [searchedPosts, setSearchedPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query");
+
+  const location = useLocation()
+ 
 
   useEffect(() => {
     if (!query) {
@@ -38,6 +42,7 @@ export const SearchPosts = () => {
 
   return (
     <div>
+
       <form onSubmit={handleSubmit}>
         <input type="text" placeholder="input id" name="search" />
         <button type="submit">Search</button>
@@ -47,7 +52,7 @@ export const SearchPosts = () => {
           searchedPosts.map((post) => {
             return (
               <li key={post.id}>
-                <Link to={`/posts/${post.id}`}>{post.title}</Link>
+                <Link to={`/posts/${post.id}`} state={{from: location}}>{post.title}</Link>
               </li>
             );
           })}

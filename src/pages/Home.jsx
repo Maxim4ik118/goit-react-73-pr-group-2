@@ -18,7 +18,7 @@ const toastConfig = {
   theme: 'colored',
 };
 
-export function Home() {
+export default function Home() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
