@@ -10,6 +10,9 @@ export const Reviews = () => {
   const { postId } = useParams();
 
   useEffect(() => {
+    if (!postId){
+      return;
+    }
     const fetchReviews = async () => {
       try {
         setLoading(true);

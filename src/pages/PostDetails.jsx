@@ -17,6 +17,7 @@ const toastConfig = {
   theme: 'colored',
 };
 export const PostDetails = () => {
+
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -24,6 +25,9 @@ export const PostDetails = () => {
 
 
   useEffect(() => {
+    if (!postId){
+      return;
+    }
     const fetchPost = async () => {
       try {
         setLoading(true);
