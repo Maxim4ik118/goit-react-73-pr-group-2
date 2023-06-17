@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://Maxim4ik118.github.io/goit-react-73-pr-group-2/",
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.5",
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
@@ -11,6 +12,7 @@
     "nanoid": "^4.0.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "react-redux": "^8.1.0",
     "react-scripts": "5.0.1",
     "react-toastify": "^9.1.2",
     "styled-components": "^5.3.10",

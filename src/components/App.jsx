@@ -1,105 +1,131 @@
-import React, { useState, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import { nanoid } from "nanoid";
+import React, { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import { nanoid } from 'nanoid';
 
-import BookForm from "./BookForm/BookForm";
-import { Loader } from "./Loader/Loader";
-import BookList from "./BookList/BookList";
+import BookForm from './BookForm/BookForm';
+import { Loader } from './Loader/Loader';
+import BookList from './BookList/BookList';
 
-import { deleteBookById, getAllBooks } from "services/api";
-import * as filterTypes from "../constants/filterTypes";
+import { deleteBookById, getAllBooks } from 'services/api';
+import * as filterTypes from '../constants/filterTypes';
 
-import "react-toastify/dist/ReactToastify.css";
-import { StyledButtons } from "./App.styled";
+import 'react-toastify/dist/ReactToastify.css';
+import { StyledButtons } from './App.styled';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  addBook,
+  setBooks,
+  setError,
+  setFilterType,
+  setLoading,
+  toggleFavoriteBook,
+} from 'redux/bookSlice/bookSlice';
 
 const toastConfig = {
-  position: "top-center",
+  position: 'top-center',
   autoClose: 5000,
   hideProgressBar: false,
   closeOnClick: true,
   pauseOnHover: true,
   draggable: true,
   progress: undefined,
-  theme: "colored",
+  theme: 'colored',
 };
 
 export function App() {
-  const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  // const [books, setBooks] = useState([]);
+  // const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState(null);
+  const filterType = useSelector(store => store.books.filterType);
 
-  const [filterType, setFilterType] = useState("all"); //all, favourites
+  const books = useSelector(store => store.books.books);
+  const error = useSelector(store => store.books.error);
+  const loading = useSelector(store => store.books.loading);
+
+  // const [filterType, setFilterType] = useState('all'); //all, favourites
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        setLoading(true);
-        setError(null);
+        dispatch(setLoading(true));
+        // setLoading(true);
+        dispatch(setError(null));
+        // setError(null);
         const response = await getAllBooks();
-        setBooks(response);
+        dispatch(setBooks(response));
+        // setBooks(response);
       } catch (err) {
-        setError(err.message);
+        dispatch(setError(err.message));
+        // setError(err.message);
       } finally {
-        setLoading(false);
+        dispatch(setLoading(false));
+        // setLoading(false);
       }
     };
     fetchBooks();
   }, []);
-  const onAddBook = (book) => {
-    const finalBookData = {
-      id: nanoid(),
-      ...book,
-    };
-    setBooks([...books, finalBookData]);
+
+  const onAddBook = book => {
+    // const finalBookData = {
+    //   id: nanoid(),
+    //   ...book,
+    // };
+    // setBooks([...books, finalBookData]);
+
+    // dispatch({ type: 'books/addBook', payload: book });
+    dispatch(addBook(book));
+
     toast.success(
       `Book with title ${book.title} successfully added!`,
       toastConfig
     );
   };
-  const onRemoveBook = async (bookId) => {
+
+  const onRemoveBook = async bookId => {
     try {
-      setLoading(true);
-      setError(null);
+      dispatch(setLoading(true));
+      // setLoading(true);
+      dispatch(setError(null));
+      // setError(null);
       const deletedBook = await deleteBookById(bookId);
-      setBooks(books.filter((book) => book._id !== deletedBook._id));
+
+      dispatch(setBooks(books.filter(book => book._id !== deletedBook._id)));
       toast.success(
         `Book with title ${deletedBook.title} successfully removed!`,
         toastConfig
       );
     } catch (err) {
-      setError(err.message);
+      dispatch(setError(err.message));
+      // setError(err.message);
       toast.error(err.message, toastConfig);
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
+      // setLoading(false);
     }
   };
-  const onToggleFavourite = (bookId) => {
-    const updatedBooks = books.map((book) => {
-      if (bookId === book._id) {
-        return { ...book, favourite: !book.favourite };
-      }
-      return book;
-    });
-    setBooks(updatedBooks);
-  };
-  console.log(books);
 
-  const onSelectType = (type) => {
-    setFilterType(type);
+  const onToggleFavourite = bookId => {
+    dispatch(toggleFavoriteBook(bookId));
   };
 
-  const filteredBookCards = (type) => {
+  const onSelectType = type => {
+    dispatch(setFilterType(type));
+  };
+
+  const filteredBookCards = type => {
     switch (type) {
       case filterTypes.all:
         return books;
       case filterTypes.favourites:
-        return books.filter((book) => book.favourite);
+        return books.filter(book => book.favourite);
       default:
         return books;
     }
   };
 
-const filteredCards = filteredBookCards(filterType);
+  const filteredCards = filteredBookCards(filterType);
 
   return (
     <div>
@@ -108,7 +134,7 @@ const filteredCards = filteredBookCards(filterType);
         <button
           type="button"
           className={`filterBtn ${
-            filterType === filterTypes.favourites ? "active" : ""
+            filterType === filterTypes.favourites ? 'active' : ''
           }`}
           onClick={() => onSelectType(filterTypes.favourites)}
         >
@@ -117,7 +143,7 @@ const filteredCards = filteredBookCards(filterType);
         <button
           type="button"
           className={`filterBtn ${
-            filterType === filterTypes.all ? "active" : ""
+            filterType === filterTypes.all ? 'active' : ''
           }`}
           onClick={() => onSelectType(filterTypes.all)}
         >
